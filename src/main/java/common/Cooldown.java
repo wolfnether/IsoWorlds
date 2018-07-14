@@ -24,7 +24,6 @@
  */
 package common;
 
-import bukkit.MainBukkit;
 import org.bukkit.ChatColor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -80,7 +79,7 @@ public class Cooldown implements CooldownType {
         if (cooldown != null) {
             String timerMessage = this.getCooldownTimer(cooldown);
             pPlayer.sendMessage(ChatColor.GOLD + "[IsoWorlds]: " + ChatColor.AQUA + Msg.keys.UNAVAILABLE_COMMAND + timerMessage);
-            MainBukkit.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
+            MainSponge.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
 
             return false;
         }

@@ -37,7 +37,7 @@ public class Logger {
         if (this.type.equals("sponge")) {
             Utils.cm(message);
         } else if (this.type.equals("bukkit")) {
-            bukkit.util.Utils.cm("[IsoWorlds]: " + message);
+            sponge.util.Utils.cm("[IsoWorlds]: " + message);
         }
     }
 }

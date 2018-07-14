@@ -24,8 +24,6 @@
  */
 package common;
 
-import bukkit.util.Logger;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,6 +32,8 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+
+import sponge.util.Logger;
 
 public class ResetAutoDims {
     // reset worlds
