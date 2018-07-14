@@ -757,15 +757,15 @@ public class Utils {
 
     // Check if mirror iw
     //0 normal - 1 anomally
-    public static int isMirrored(String worldname) {
+    public static boolean isMirrored(World world) {
         // Check if file exist, to detect mirrors
-        File file = new File(ManageFiles.getPath() + "/" + worldname + "@PUSHED");
-        File file2 = new File(ManageFiles.getPath() + "/" + worldname);
+        File file = new File(ManageFiles.getPath() + "/" + world.getName() + "@PUSHED");
+        File file2 = new File(ManageFiles.getPath() + "/" + world.getName());
         // If exists and contains Isoworld
-        if (file.exists() & file2.exists() & worldname.contains("-IsoWorld")) {
-            return 1;
+        if (file.exists() & file2.exists() & world.getName().endsWith("-IsoWorld")) {
+            return true;
         }
-        return 0;
+        return false;
     }
 
     // Cooldown modèle: uuid;commande

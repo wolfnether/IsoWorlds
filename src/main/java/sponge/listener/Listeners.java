@@ -189,6 +189,7 @@ public class Listeners {
             Sponge.getServer().unloadWorld(world);
             Sponge.getServer().deleteWorld(world.getProperties());
         } else {
+            Isoworld.worldManager.isoworldLoaded(world);
             Logger.info("LOADING " + event.getTargetWorld().getName() + " WORLD, CAUSED BY: " + event.getCause().toString());
         }
     }

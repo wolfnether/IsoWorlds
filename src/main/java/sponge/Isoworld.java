@@ -63,9 +63,10 @@ import java.util.concurrent.TimeUnit;
         name = "IsoWorlds",
         description = "Large scale personal world manager",
         url = "https://isolonice.fr",
-        version = "1.9.3.3-BETA",
+        version = "1.9.3.4-ALPHA",
         authors = {
-                "Sythiel"
+                "Sythiel",
+                "Alrianne"
         }
 )
 
@@ -75,9 +76,9 @@ public class Isoworld {
     private org.slf4j.Logger logger;
     private Game game;
     public String servername;
-    static Map<String, Integer> worlds = new HashMap<String, Integer>();
     public static Map<String, Integer> lock = new HashMap<String, Integer>();
     public Cooldown cooldown;
+    public static WorldManager worldManager;
 
     @Inject
     @DefaultConfig(sharedRoot = true)
@@ -141,7 +142,7 @@ public class Isoworld {
         logger.info("Les IsoWorlds sont chargés et opérationnels !");
 
         // Purge map
-        worlds.clear();
+        this.worldManager = new WorldManager();
         lock.clear();
     }
 
@@ -161,120 +162,58 @@ public class Isoworld {
             }
         }).submit(this);
 
-        // IsoWorlds task unload
+        // IsoWorlds task delete
         Task.builder().execute(() -> {
-            // Démarrage de la procédure, on log tout les élements du map à chaque fois
-            Logger.warning("Démarrage de l'analayse des IsoWorlds vides pour déchargement...");
-            if (worlds.isEmpty()) {
-                Logger.info("IsoWorlds inactifs à l'analyse précédente: Aucun");
-            } else {
-                Logger.info("IsoWorlds inactifs à l'analyse précédente:");
-                for (Map.Entry<String, Integer> entry : worlds.entrySet()) {
-                    Logger.info("- " + entry);
-                }
-            }
-            // Boucle de tous les mondes
-            for (World world : Sponge.getServer().getWorlds()) {
-                // Si le monde est chargé et contient IsoWorld
-                if (world.isLoaded() & world.getName().contains("-IsoWorld")) {
+            Logger.warning("Démarrage de la suppression des isoworld inactif");
+            for (World world : worldManager.getUnloadedIsoworld()) {
+                if (!Utils.getStatus(world.getName(), Msg.keys.SQL)) {
+                    File check = new File(ManageFiles.getPath() + world.getName());
+                    // Si le dossier existe alors on met le statut à 1 (push)
+                    if (check.exists()) {
+                        Utils.cm("debug 2");
+                        Utils.setStatus(world.getName(), 1, Msg.keys.SQL);
 
-                    // Si le nombre de joueurs == 0
-                    if (world.getPlayers().size() == 0) {
-                        // Si le monde n'est pas présent dans le tableau
-                        if (worlds.get(world.getName()) == null) {
-                            worlds.put(world.getName(), 1);
-                            Logger.warning(world.getName() + " vient d'être ajouté à l'analyse");
-                        } else {
-                            // Sinon on incrémente
-                            worlds.put(world.getName(), worlds.get(world.getName()) + 1);
+                        // Suppression ID
+                        ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/level_sponge.dat"));
+                        ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/level_sponge.dat_old"));
+                        ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/session.lock"));
+                        ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/forcedchunks.dat"));
+
+                        // Tag du dossier en push
+                        //TODO: copy world and delete it with sponge api
+                        ManageFiles.rename(ManageFiles.getPath() + world.getName(), "@PUSH");
+                        Logger.info("- " + world.getName() + " : PUSH avec succès");
+
+                        // Suppression du monde
+                        try {
+                            if (Sponge.getServer().deleteWorld(world.getProperties()).get()) {
+                                Logger.info("- " + world.getName() + " : Isoworld supprimé avec succès !");
+                            }
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
                         }
 
-                        // Si le nombre est supérieur ou = à X on unload
-                        if (worlds.get(world.getName()) >= x) {
-                            Logger.info("La valeur de: " + world.getName() + " est de " + x + " , déchargement...");
-                            // Procédure de déchargement //
-
-                            // Sauvegarde du monde et déchargement
-                            try {
-                                Sponge.getServer().getWorld(world.getName()).get().save();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                continue;
-                            }
-
-                            // Save & unload AUTO CORRECT
-                            try {
-                                world.save();
-                                // If is mirrored then unload + remove then return
-                                if (Utils.isMirrored(world.getName()) == 1) {
-                                    Logger.severe("--- Anomalie détectée, unload interrompu et suppression de l'anomalie: " + world.getName() + " ---");
-                                    Sponge.getServer().unloadWorld(world);
-                                    Sponge.getServer().deleteWorld(world.getProperties());
-                                    Logger.severe("--- Anomalie: Corrigée, suppression effectuée avec succès de l'isoworld: " + world.getName() + " ---");
-                                    continue;
-                                } else {
-                                    if (!Sponge.getServer().unloadWorld(world)) {
-                                        Logger.severe("--- Echec du déchargement de l'IsoWorld: " + world.getName() + " ---");
-                                        continue;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                return;
-                            }
-
-                            // Suppression dans le tableau
-                            worlds.remove(world.getName());
-
-                            // Vérification du statut du monde, si il est push ou non
-                            if (!Utils.getStatus(world.getName(), Msg.keys.SQL)) {
-                                Utils.cm("debug 1");
-                                File check = new File(ManageFiles.getPath() + world.getName());
-                                // Si le dossier existe alors on met le statut à 1 (push)
-                                if (check.exists()) {
-                                    Utils.cm("debug 2");
-                                    Utils.setStatus(world.getName(), 1, Msg.keys.SQL);
-
-                                    // Suppression ID
-                                    ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/level_sponge.dat"));
-                                    ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/level_sponge.dat_old"));
-                                    ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/session.lock"));
-                                    ManageFiles.deleteDir(new File(ManageFiles.getPath() + "/" + world.getName() + "/forcedchunks.dat"));
-
-                                    // Tag du dossier en push
-                                    ManageFiles.rename(ManageFiles.getPath() + world.getName(), "@PUSH");
-                                    Logger.info("- " + world.getName() + " : PUSH avec succès");
-
-                                    // Suppression du monde
-                                    try {
-                                        if (Sponge.getServer().deleteWorld(world.getProperties()).get()) {
-                                            Logger.info("- " + world.getName() + " : Isoworld supprimé avec succès !");
-                                        }
-                                    } catch (InterruptedException | ExecutionException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            } else {
-                                // Sinon on continue la boucle
-                                continue;
-                            }
-
-                        }
-                        // Si le nombre de joueur est supérieur à 0, purge le tableau du IsoWorld
-                    } else if (worlds.get(world.getName()) != null) {
-                        worlds.remove(world.getName());
-                        Logger.warning(world.getName() + " de nouveau actif, supprimé de l'analyse");
                     }
                 }
             }
-            if (worlds.isEmpty()) {
-                Logger.info("Aucun IsoWorld n'est à " + x + " minutes d'inactivité...");
-                Logger.warning("Fin de l'analyse");
-            } else {
-                Logger.info("Les IsoWorlds vides depuis " + x + " minutes viennent d'être déchargés");
-                Logger.warning("Fin de l'analyse");
-            }
+        });
+
+        // IsoWorlds task unload
+        Task.builder().execute(() -> {
+            Logger.warning("Démarrage de l'analayse des IsoWorlds vides pour déchargement...");
+            for (World world : worldManager.getLoadedIsoworld()) {
+                    if (world.getPlayers().size() != 0) {
+                        worldManager.resetCountdown(world);
+                    } else {
+                        if (worldManager.incrementCountdown(world) >= x) {
+                            Logger.info("La valeur de: " + world.getName() + " est de " + x + " , déchargement...");
+                            if(worldManager.unloadIsoworld(world)) {
+                                Logger.info("Succée");
+                            }
+                        }
+                        // Si le nombre de joueur est supérieur à 0, purge le tableau du IsoWorld
+                    }
+                }
         }).submit(this);
 
     }
