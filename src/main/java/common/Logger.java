@@ -34,10 +34,6 @@ public class Logger {
     }
 
     void log(String message) {
-        if (this.type.equals("sponge")) {
-            Utils.cm(message);
-        } else if (this.type.equals("bukkit")) {
-            sponge.util.Utils.cm("[IsoWorlds]: " + message);
-        }
+        Utils.cm(message);
     }
 }

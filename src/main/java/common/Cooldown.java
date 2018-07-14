@@ -148,14 +148,6 @@ public class Cooldown implements CooldownType {
         addPlayerCooldown(uuid_p, type, delay);
     }
 
-    /**
-     * Bukkit method
-     */
-    public void addPlayerCooldown(org.bukkit.entity.Player pPlayer, String type, int delay) {
-        String uuid_p = pPlayer.getUniqueId().toString();
-        addPlayerCooldown(uuid_p, type, delay);
-    }
-
     private void addPlayerCooldown(String uuid_p, String type, int delay) {
         String query = "INSERT INTO `player_cooldown` (`UUID_P`, `date`, `type`, `server_id`) VALUES (?, ?, ?, ?)";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() + (delay * 1000));
