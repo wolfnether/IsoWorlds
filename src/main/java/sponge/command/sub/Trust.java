@@ -30,7 +30,7 @@ package sponge.command.sub;
 
 import common.Cooldown;
 import common.Msg;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.util.Utils;
 
 import org.spongepowered.api.Sponge;
@@ -53,7 +53,7 @@ import java.util.*;
 
 public class Trust implements CommandCallable {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult process(CommandSource source, String args) throws CommandException {

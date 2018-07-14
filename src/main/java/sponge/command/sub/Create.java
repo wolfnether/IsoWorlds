@@ -28,7 +28,7 @@ import common.Msg;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.location.Locations;
 import sponge.util.Utils;
 import common.ManageFiles;
@@ -49,7 +49,7 @@ import java.util.Optional;
 import static sponge.util.Utils.setWorldProperties;
 
 public class Create implements CommandCallable {
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult process(CommandSource source, String args) throws CommandException {

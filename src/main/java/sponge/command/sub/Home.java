@@ -26,7 +26,7 @@ package sponge.command.sub;
 
 import common.Cooldown;
 import common.Msg;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.location.Locations;
 import sponge.util.Utils;
 
@@ -44,7 +44,7 @@ import static sponge.util.Utils.isLocked;
 
 public class Home implements CommandExecutor {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {

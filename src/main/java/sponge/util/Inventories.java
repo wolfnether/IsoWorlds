@@ -51,7 +51,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.location.Locations;
 
 import java.sql.ResultSet;
@@ -59,14 +59,14 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static sponge.MainSponge.instance;
+import static sponge.Isoworld.instance;
 import static sponge.util.Utils.iwInProcess;
 import static sponge.util.Utils.setWorldProperties;
 
 public class Inventories {
 
     // MENU PRINCIPAL
-    private static final MainSponge plugin = MainSponge.instance;
+    private static final Isoworld plugin = Isoworld.instance;
 
     public static Inventory menuPrincipal(Player pPlayer) {
 

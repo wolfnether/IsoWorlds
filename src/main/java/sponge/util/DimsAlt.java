@@ -33,7 +33,7 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
 import org.spongepowered.api.world.storage.WorldProperties;
-import sponge.MainSponge;
+import sponge.Isoworld;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,7 +48,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class DimsAlt {
 
-    private static final MainSponge plugin = MainSponge.instance;
+    private static final Isoworld plugin = Isoworld.instance;
 
     private static final DataQuery toId = DataQuery.of("SpongeData", "dimensionId");
 

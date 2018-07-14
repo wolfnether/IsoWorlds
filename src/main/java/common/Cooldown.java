@@ -28,7 +28,7 @@ import org.bukkit.ChatColor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.util.Utils;
 
 import java.sql.PreparedStatement;
@@ -63,7 +63,7 @@ public class Cooldown implements CooldownType {
             pPlayer.sendMessage(Text.of(Text.builder("[IsoWorlds]: ").color(TextColors.GOLD)
                     .append(Text.of(Text.builder(Msg.keys.UNAVAILABLE_COMMAND + timerMessage).color(TextColors.AQUA))).build()));
 
-            MainSponge.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
+            Isoworld.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
 
             return false;
         }
@@ -79,7 +79,7 @@ public class Cooldown implements CooldownType {
         if (cooldown != null) {
             String timerMessage = this.getCooldownTimer(cooldown);
             pPlayer.sendMessage(ChatColor.GOLD + "[IsoWorlds]: " + ChatColor.AQUA + Msg.keys.UNAVAILABLE_COMMAND + timerMessage);
-            MainSponge.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
+            Isoworld.lock.remove(pPlayer.getUniqueId().toString() + ";" + String.class.getName());
 
             return false;
         }

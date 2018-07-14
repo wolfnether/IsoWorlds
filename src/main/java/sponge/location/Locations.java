@@ -27,7 +27,7 @@ package sponge.location;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.data.property.block.MatterProperty;
 import org.spongepowered.api.event.cause.Cause;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.util.Utils;
 
 import org.spongepowered.api.Sponge;
@@ -40,7 +40,7 @@ import java.util.Optional;
 
 public class Locations {
 
-    private static final MainSponge plugin = MainSponge.instance;
+    private static final Isoworld plugin = Isoworld.instance;
 
     public static Optional<Location<World>> getHighestLoc(Location<World> loc) {
         Optional<Integer> y = getHighestY(loc.getExtent(), loc.getX(), loc.getZ(), loc.getBlockY());

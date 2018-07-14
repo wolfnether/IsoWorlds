@@ -26,7 +26,7 @@ package sponge.command;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.cause.Cause;
-import sponge.MainSponge;
+import sponge.Isoworld;
 
 import sponge.command.sub.*;
 import org.spongepowered.api.command.CommandException;
@@ -40,9 +40,9 @@ import org.spongepowered.api.text.Text;
 
 import sponge.util.Inventories;
 
-public class IsoworldsCommande implements CommandExecutor {
+public class IsoworldsCommands implements CommandExecutor {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
@@ -69,7 +69,7 @@ public class IsoworldsCommande implements CommandExecutor {
                 .child(new UnTrust(), "retirer", "supprimer", "untrust", "remove")
                 .child(new Weather(), "meteo", "weather", "m", "météo")
                 .child(new Time(), "time", "temps", "t", "cycle")
-                .executor(new IsoworldsCommande())
+                .executor(new IsoworldsCommands())
                 .build();
     }
 }

@@ -30,7 +30,7 @@ package sponge.command.sub;
 
 import common.Msg;
 import org.spongepowered.api.text.format.TextColors;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.location.Locations;
 import sponge.util.Utils;
 
@@ -52,7 +52,7 @@ import static sponge.util.Utils.isLocked;
 
 public class Teleport implements CommandCallable {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult process(CommandSource source, String args) throws CommandException {

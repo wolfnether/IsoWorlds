@@ -27,10 +27,10 @@ package sponge.util;
 
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import sponge.MainSponge;
+import sponge.Isoworld;
 
 public class Logger {
-    private static final MainSponge instance = MainSponge.instance;
+    private static final Isoworld instance = Isoworld.instance;
 
     public static void info(String s) {
         instance.getGame().getServer().getConsole().sendMessage(Text.of(Text.builder("[").color(TextColors.WHITE)

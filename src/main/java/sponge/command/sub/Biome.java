@@ -37,7 +37,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.util.Utils;
 
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ import java.util.Optional;
 
 public class Biome implements CommandCallable {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     @Override
     public CommandResult process(CommandSource source, String args) throws CommandException {

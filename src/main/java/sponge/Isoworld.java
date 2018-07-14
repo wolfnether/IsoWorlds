@@ -69,8 +69,8 @@ import java.util.concurrent.TimeUnit;
         }
 )
 
-public class MainSponge {
-    public static MainSponge instance;
+public class Isoworld {
+    public static Isoworld instance;
     public final common.Logger commonLogger;
     private org.slf4j.Logger logger;
     private Game game;
@@ -89,7 +89,7 @@ public class MainSponge {
     public Mysql database;
 
     @Inject
-    public MainSponge(org.slf4j.Logger logger, Game game) {
+    public Isoworld(org.slf4j.Logger logger, Game game) {
         this.logger = logger;
         this.commonLogger = new common.Logger("sponge");
         this.game = game;
@@ -137,7 +137,7 @@ public class MainSponge {
         registerEvents();
         logger.info("Chargement des IsoWorlds...");
 
-        Sponge.getCommandManager().register(this, IsoworldsCommande.getCommand(), "iw", "isoworld", "isoworlds");
+        Sponge.getCommandManager().register(this, IsoworldsCommands.getCommand(), "iw", "isoworld", "isoworlds");
         logger.info("Les IsoWorlds sont chargés et opérationnels !");
 
         // Purge map

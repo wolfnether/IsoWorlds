@@ -29,7 +29,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import sponge.MainSponge;
+import sponge.Isoworld;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -39,7 +39,7 @@ public class PullTask implements Consumer<Task> {
     private int check = 60;
     private Player pPlayer;
     private File file;
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
 
     public PullTask(Player pPlayer, File file) {
 

@@ -37,7 +37,7 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
 import org.spongepowered.api.world.storage.WorldProperties;
-import sponge.MainSponge;
+import sponge.Isoworld;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -60,7 +60,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Utils {
 
-    public static final MainSponge plugin = MainSponge.instance;
+    public static final Isoworld plugin = Isoworld.instance;
 
     public static final DataQuery toId = DataQuery.of("SpongeData", "dimensionId");
 

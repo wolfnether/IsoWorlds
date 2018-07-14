@@ -27,7 +27,7 @@ package sponge.command.sub;
 import common.Cooldown;
 import common.ManageFiles;
 import common.Msg;
-import sponge.MainSponge;
+import sponge.Isoworld;
 import sponge.util.Utils;
 
 import org.spongepowered.api.Sponge;
@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Reforge implements CommandExecutor {
 
-    private final MainSponge plugin = MainSponge.instance;
+    private final Isoworld plugin = Isoworld.instance;
     final static Map<String, Timestamp> confirm = new HashMap<String, Timestamp>();
 
     @Override
