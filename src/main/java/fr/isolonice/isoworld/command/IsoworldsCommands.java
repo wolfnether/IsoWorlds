@@ -24,11 +24,10 @@
  */
 package fr.isolonice.isoworld.command;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.cause.Cause;
 import fr.isolonice.isoworld.Isoworld;
-
 import fr.isolonice.isoworld.command.sub.*;
+import fr.isolonice.isoworld.util.Inventories;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -36,23 +35,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
-
-import fr.isolonice.isoworld.util.Inventories;
 
 public class IsoworldsCommands implements CommandExecutor {
 
     private final Isoworld plugin = Isoworld.instance;
-
-    @Override
-    public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
-        Player pPlayer = (Player) source;
-
-        //IsoworldsUtils.getHelp(pPlayer);
-        // Ouverture du menu principal
-        pPlayer.openInventory(Inventories.menuPrincipal(pPlayer),  Cause.source(Sponge.getPluginManager().fromInstance(plugin).get()).build());
-        return CommandResult.success();
-    }
 
     // Constructeurs
     public static CommandSpec getCommand() {
@@ -71,5 +59,15 @@ public class IsoworldsCommands implements CommandExecutor {
                 .child(new Time(), "time", "temps", "t", "cycle")
                 .executor(new IsoworldsCommands())
                 .build();
+    }
+
+    @Override
+    public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
+        Player pPlayer = (Player) source;
+
+        //IsoworldsUtils.getHelp(pPlayer);
+        // Ouverture du menu principal
+        pPlayer.openInventory(Inventories.menuPrincipal(pPlayer), Cause.source(Sponge.getPluginManager().fromInstance(plugin).get()).build());
+        return CommandResult.success();
     }
 }

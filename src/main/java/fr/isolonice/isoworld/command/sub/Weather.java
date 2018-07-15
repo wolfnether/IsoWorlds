@@ -28,11 +28,9 @@ package fr.isolonice.isoworld.command.sub;
  * Created by Edwin on 14/10/2017.
  */
 
+import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Cooldown;
 import fr.isolonice.isoworld.util.Msg;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.world.weather.Weathers;
-import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Utils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
@@ -41,12 +39,15 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.weather.Weathers;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Integer.parseInt;
 
@@ -217,12 +218,19 @@ public class Weather implements CommandCallable {
             return CommandResult.success();
 
         } else if (size == 3) {
-            if (arg[0].equals("soleil") || arg[0].equals("sun")) {
-                Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.CLEAR, parseInt(arg[1]));
-            } else if (arg[0].equals("pluie") || arg[0].equals("rain")) {
-                Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.RAIN, parseInt(arg[1]));
-            } else if (arg[0].equals("orage") || arg[0].equals("storm")) {
-                Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.THUNDER_STORM, parseInt(arg[1]));
+            switch (arg[0]) {
+                case "soleil":
+                case "sun":
+                    Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.CLEAR, parseInt(arg[1]));
+                    break;
+                case "pluie":
+                case "rain":
+                    Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.RAIN, parseInt(arg[1]));
+                    break;
+                case "orage":
+                case "storm":
+                    Sponge.getServer().getWorld(arg[2]).get().setWeather(Weathers.THUNDER_STORM, parseInt(arg[1]));
+                    break;
             }
             // Message pour tous les joueurs
             for (Player p : Sponge.getServer().getWorld(arg[2]).get().getPlayers()) {

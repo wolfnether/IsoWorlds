@@ -24,12 +24,11 @@
  */
 package fr.isolonice.isoworld.command.sub;
 
+import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Cooldown;
 import fr.isolonice.isoworld.util.ManageFiles;
 import fr.isolonice.isoworld.util.Msg;
-import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -40,19 +39,32 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.*;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Reforge implements CommandExecutor {
 
-    private final Isoworld plugin = Isoworld.instance;
     final static Map<String, Timestamp> confirm = new HashMap<String, Timestamp>();
+    private final Isoworld plugin = Isoworld.instance;
+
+    // Constructeurs
+    public static CommandSpec getCommand() {
+        return CommandSpec.builder()
+                .description(Text.of("Commandes de refonte des iWorlds"))
+                .permission("iworlds.refonte")
+                .executor(new Reforge())
+                .build();
+    }
 
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
@@ -141,15 +153,5 @@ public class Reforge implements CommandExecutor {
         Sponge.getCommandManager().process(pPlayer, "iw");
 
         return CommandResult.success();
-    }
-
-
-    // Constructeurs
-    public static CommandSpec getCommand() {
-        return CommandSpec.builder()
-                .description(Text.of("Commandes de refonte des iWorlds"))
-                    .permission("iworlds.refonte")
-                .executor(new Reforge())
-                .build();
     }
 }

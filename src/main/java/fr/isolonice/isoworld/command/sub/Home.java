@@ -24,12 +24,11 @@
  */
 package fr.isolonice.isoworld.command.sub;
 
-import fr.isolonice.isoworld.util.Cooldown;
-import fr.isolonice.isoworld.util.Msg;
 import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.location.Locations;
+import fr.isolonice.isoworld.util.Cooldown;
+import fr.isolonice.isoworld.util.Msg;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,6 +44,15 @@ import static fr.isolonice.isoworld.util.Utils.isLocked;
 public class Home implements CommandExecutor {
 
     private final Isoworld plugin = Isoworld.instance;
+
+    // Constructeurs
+    public static CommandSpec getCommand() {
+        return CommandSpec.builder()
+                .description(Text.of("Commande pour retourner dans son iWorld"))
+                .permission("isoworlds.maison")
+                .executor(new Home())
+                .build();
+    }
 
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
@@ -95,14 +103,5 @@ public class Home implements CommandExecutor {
         plugin.cooldown.addPlayerCooldown(pPlayer, Cooldown.MAISON, Cooldown.MAISON_DELAY);
 
         return CommandResult.success();
-    }
-
-    // Constructeurs
-    public static CommandSpec getCommand() {
-        return CommandSpec.builder()
-                .description(Text.of("Commande pour retourner dans son iWorld"))
-                .permission("isoworlds.maison")
-                .executor(new Home())
-                .build();
     }
 }

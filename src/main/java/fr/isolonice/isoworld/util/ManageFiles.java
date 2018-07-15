@@ -75,13 +75,8 @@ public class ManageFiles {
         File dir = new File(dest);
 
         // Move file to a new directory
-        boolean success = file.renameTo(new File(dir, file.getName()));
 
-        if (success) {
-            return true;
-        } else {
-            return false;
-        }
+        return file.renameTo(new File(dir, file.getName()));
     }
 
     // Récupère la liste des dossiers tag
@@ -122,8 +117,7 @@ public class ManageFiles {
 
     // Récupération du chemin racine
     public static String getPath() {
-        String path = (System.getProperty("user.dir") + "/Isolonice/");
-        return path;
+        return System.getProperty("user.dir") + "/Isolonice/";
     }
 
 }

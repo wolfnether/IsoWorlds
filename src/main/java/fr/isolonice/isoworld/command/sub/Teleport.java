@@ -28,12 +28,10 @@ package fr.isolonice.isoworld.command.sub;
  * Created by Edwin on 14/10/2017.
  */
 
-import fr.isolonice.isoworld.util.Msg;
-import org.spongepowered.api.text.format.TextColors;
 import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.location.Locations;
+import fr.isolonice.isoworld.util.Msg;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -41,6 +39,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 

@@ -24,29 +24,28 @@
  */
 package fr.isolonice.isoworld.listener;
 
+import fr.isolonice.isoworld.Isoworld;
+import fr.isolonice.isoworld.location.Locations;
+import fr.isolonice.isoworld.util.Logger;
 import fr.isolonice.isoworld.util.ManageFiles;
 import fr.isolonice.isoworld.util.Msg;
+import fr.isolonice.isoworld.util.Utils;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.scheduler.Task;
-import fr.isolonice.isoworld.location.Locations;
-import fr.isolonice.isoworld.util.Logger;
-import fr.isolonice.isoworld.util.Utils;
-import fr.isolonice.isoworld.Isoworld;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.entity.MoveEntityEvent;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
-import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -55,7 +54,7 @@ import org.spongepowered.api.world.World;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import static fr.isolonice.isoworld.Isoworld.instance;
@@ -70,12 +69,7 @@ public class Listeners {
 
         // Teleport to spawn of own isoworld if is loaded
         if (Sponge.getServer().getWorld(worldname).isPresent() && Sponge.getServer().getWorld(worldname).get().isLoaded()) {
-            Task.builder().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Locations.teleport(p, worldname);
-                }
-            }).delay(2, TimeUnit.MILLISECONDS).submit(instance);
+            Task.builder().execute(() -> Locations.teleport(p, worldname)).delay(2, TimeUnit.MILLISECONDS).submit(instance);
         } else {
             // If own isoworld not loaded then go to default world
             if (Sponge.getServer().getWorld("Isolonice").isPresent()) {
@@ -95,8 +89,7 @@ public class Listeners {
 
         String worldname = player.getWorld().getName();
 
-        Player p = player;
-        if (p.hasPermission("isoworlds.bypass.spawn")) {
+        if (player.hasPermission("isoworlds.bypass.spawn")) {
             return;
         }
 
@@ -153,7 +146,7 @@ public class Listeners {
             public void run() {
                 Locations.teleport(event.getTargetUser().getPlayer().get(), worldname);
             }
-        }).delay(1/5, TimeUnit.SECONDS).submit(instance);
+        }).delay(1 / 5, TimeUnit.SECONDS).submit(instance);
     }
 
     // Logout event, tp spawn
@@ -223,7 +216,6 @@ public class Listeners {
                 p.kick(Text.of("Vous faites quelque chose d'anormal, veuillez avertir le staff"));
                 Logger.warning("--- Le joueur " + p.getName() + " fait partie de l'anomalie ---");
             }
-            return;
         } else {
             Logger.info("UNLOADING " + event.getTargetWorld().getName() + " WORLD, CAUSED BY: " + event.getCause().toString());
         }

@@ -24,11 +24,11 @@
  */
 package fr.isolonice.isoworld.util;
 
+import fr.isolonice.isoworld.Isoworld;
 import org.bukkit.ChatColor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import fr.isolonice.isoworld.Isoworld;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

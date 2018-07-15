@@ -25,28 +25,26 @@
 package fr.isolonice.isoworld;
 
 import com.google.inject.Inject;
-
-import fr.isolonice.isoworld.util.*;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.world.WorldArchetypes;
-import org.spongepowered.api.world.gamerule.DefaultGameRules;
-import org.spongepowered.api.world.storage.WorldProperties;
+import fr.isolonice.isoworld.command.IsoworldsCommands;
 import fr.isolonice.isoworld.listener.Listeners;
-
+import fr.isolonice.isoworld.util.*;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
-import fr.isolonice.isoworld.command.*;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.WorldArchetypes;
+import org.spongepowered.api.world.gamerule.DefaultGameRules;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,13 +67,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Isoworld {
     public static Isoworld instance;
+    public static Map<String, Integer> lock = new HashMap<String, Integer>();
+    public static WorldManager worldManager;
+    public String servername;
+    public Cooldown cooldown;
+    public Mysql database;
     private org.slf4j.Logger logger;
     private Game game;
-    public String servername;
-    public static Map<String, Integer> lock = new HashMap<String, Integer>();
-    public Cooldown cooldown;
-    public static WorldManager worldManager;
-
     @Inject
     @DefaultConfig(sharedRoot = true)
     private File configuration = null;
@@ -83,7 +81,6 @@ public class Isoworld {
     @DefaultConfig(sharedRoot = true)
     private ConfigurationLoader<CommentedConfigurationNode> configurationLoader = null;
     private CommentedConfigurationNode configurationNode = null;
-    public Mysql database;
 
     @Inject
     public Isoworld(org.slf4j.Logger logger, Game game) {
@@ -142,7 +139,7 @@ public class Isoworld {
     }
 
     private void everyMinutes() {
-        Task task = Task.builder().execute(() -> this.unload())
+        Task task = Task.builder().execute(this::unload)
                 .async().delay(100, TimeUnit.MILLISECONDS).interval(1, TimeUnit.MINUTES)
                 .name("Analyse des IsoWorlds vides...").submit(this.instance);
     }
@@ -197,18 +194,18 @@ public class Isoworld {
         Task.builder().execute(() -> {
             Logger.warning("Démarrage de l'analayse des IsoWorlds vides pour déchargement...");
             for (World world : worldManager.getLoadedIsoworld()) {
-                    if (world.getPlayers().size() != 0) {
-                        worldManager.resetCountdown(world);
-                    } else {
-                        if (worldManager.incrementCountdown(world) >= x) {
-                            Logger.info("La valeur de: " + world.getName() + " est de " + x + " , déchargement...");
-                            if(worldManager.unloadIsoworld(world)) {
-                                Logger.info("Succée");
-                            }
+                if (world.getPlayers().size() != 0) {
+                    worldManager.resetCountdown(world);
+                } else {
+                    if (worldManager.incrementCountdown(world) >= x) {
+                        Logger.info("La valeur de: " + world.getName() + " est de " + x + " , déchargement...");
+                        if (worldManager.unloadIsoworld(world)) {
+                            Logger.info("Succée");
                         }
-                        // Si le nombre de joueur est supérieur à 0, purge le tableau du IsoWorld
                     }
+                    // Si le nombre de joueur est supérieur à 0, purge le tableau du IsoWorld
                 }
+            }
         }).submit(this);
 
     }
@@ -227,7 +224,7 @@ public class Isoworld {
             if (!this.configuration.exists()) {
                 Logger.warning("Fichier de configuration non trouvé, création en cours...");
                 this.configuration.createNewFile();
-                this.configurationNode = ((CommentedConfigurationNode) this.configurationLoader.load());
+                this.configurationNode = this.configurationLoader.load();
                 this.configurationNode.getNode(new Object[]{"IsoWorlds", "id"}).setValue("isoworlds");
                 this.configurationNode.getNode(new Object[]{"IsoWorlds", "sql_host"}).setValue("IP ADDRESS");
                 this.configurationNode.getNode(new Object[]{"IsoWorlds", "sql_port"}).setValue(3306);
@@ -261,29 +258,26 @@ public class Isoworld {
     public void onGameStarted(GameStartedServerEvent event) {
         // ISOWORLDS-SAS
 
-        Task.builder().execute(new Runnable() {
-            @Override
-            public void run() {
-                Logger.info("Mob Griefing protection appliqué au spawn");
-                try {
-                    WorldProperties worldProperties = Sponge.getServer().createWorldProperties("Isolonice", WorldArchetypes.OVERWORLD);
-                    Sponge.getServer().getWorldProperties("Isolonice").get().setGameRule(DefaultGameRules.MOB_GRIEFING, "false");
-                    Sponge.getServer().saveWorldProperties(worldProperties);
-                } catch (IOException io) {
-                    io.printStackTrace();
-                    Logger.severe("Echec application mob griefing");
-                }
-                Logger.info("[IsoWorlds-SAS]: Stockage des IsoWorlds un tag dans le SAS");
-                File source = new File(ManageFiles.getPath() + "/ISOWORLDS-SAS/");
-                File dest = new File(ManageFiles.getPath());
-                // Retourne la liste des isoworld tag
-                for (File f : ManageFiles.getOutSAS(new File(source.getPath()))) {
-                    // Gestion des IsoWorlds non push, si ne contient pas de tag
-                    if (ManageFiles.move(source + "/" + f.getName(), dest.getPath())) {
-                        logger.info("[IsoWorlds-SAS]: " + f.getName() + " retiré du SAS");
-                    } else {
-                        logger.info("[IsoWorlds-SAS]: Echec de destockage > " + f.getName());
-                    }
+        Task.builder().execute(() -> {
+            Logger.info("Mob Griefing protection appliqué au spawn");
+            try {
+                WorldProperties worldProperties = Sponge.getServer().createWorldProperties("Isolonice", WorldArchetypes.OVERWORLD);
+                Sponge.getServer().getWorldProperties("Isolonice").get().setGameRule(DefaultGameRules.MOB_GRIEFING, "false");
+                Sponge.getServer().saveWorldProperties(worldProperties);
+            } catch (IOException io) {
+                io.printStackTrace();
+                Logger.severe("Echec application mob griefing");
+            }
+            Logger.info("[IsoWorlds-SAS]: Stockage des IsoWorlds un tag dans le SAS");
+            File source = new File(ManageFiles.getPath() + "/ISOWORLDS-SAS/");
+            File dest = new File(ManageFiles.getPath());
+            // Retourne la liste des isoworld tag
+            for (File f : ManageFiles.getOutSAS(new File(source.getPath()))) {
+                // Gestion des IsoWorlds non push, si ne contient pas de tag
+                if (ManageFiles.move(source + "/" + f.getName(), dest.getPath())) {
+                    logger.info("[IsoWorlds-SAS]: " + f.getName() + " retiré du SAS");
+                } else {
+                    logger.info("[IsoWorlds-SAS]: Echec de destockage > " + f.getName());
                 }
             }
         })

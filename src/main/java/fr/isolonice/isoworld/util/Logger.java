@@ -25,9 +25,9 @@
 package fr.isolonice.isoworld.util;
 
 
+import fr.isolonice.isoworld.Isoworld;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import fr.isolonice.isoworld.Isoworld;
 
 public class Logger {
     private static final Isoworld instance = Isoworld.instance;

@@ -24,6 +24,8 @@
  */
 package fr.isolonice.isoworld.util;
 
+import fr.isolonice.isoworld.Isoworld;
+import fr.isolonice.isoworld.location.Locations;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
@@ -49,12 +51,13 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
-import fr.isolonice.isoworld.Isoworld;
-import fr.isolonice.isoworld.location.Locations;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static fr.isolonice.isoworld.Isoworld.instance;
@@ -77,39 +80,49 @@ public class Inventories {
                     String menuName = String.valueOf(clickInventoryEvent.getTransactions().get(0).getOriginal().get(Keys.DISPLAY_NAME).get().toPlain());
                     // MENU PRINCIPAL //
                     // BIOME
-                    if (menuName.equals("Biome")) {
-                        Utils.cm("[TRACKING-IW] Clic menu BIOME: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuBiome(pPlayer));
-                        // CONFIANCE
-                    } else if (menuName.equals("Confiance")) {
-                        Utils.cm("[TRACKING-IW] Clic menu CONFIANCE: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuConfiance(pPlayer));
-                        // CONSTRUCTION
-                    } else if (menuName.equals("Construction")) {
-                        Utils.cm("[TRACKING-IW] Clic menu CONSTRUCTION: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuConstruction(pPlayer));
-                        // MAISON
-                    } else if (menuName.equals("Maison")) {
-                        Utils.cm("[TRACKING-IW] Clic menu MAISON: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuMaison(pPlayer));
-                        // METEO
-                    } else if (menuName.equals("Météo")) {
-                        Utils.cm("[TRACKING-IW] Clic menu METEO: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuMeteo(pPlayer));
-                        // ACTIVATION
-                    } else if (menuName.equals("Activation")) {
-                        Utils.cm("[TRACKING-IW] Clic menu ACTIVATION: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuActivation(pPlayer));
-                        // TELEPORTATION
-                    } else if (menuName.equals("Téléportation")) {
-                        Utils.cm("[TRACKING-IW] Clic menu TELEPORTATION: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuTeleportation(pPlayer));
-                    } else if (menuName.equals("Temps")) {
-                        Utils.cm("[TRACKING-IW] Clic menu TEMPS: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuTemps(pPlayer));
-                    } else if (menuName.equals("Warp")) {
-                        Utils.cm("[TRACKING-IW] Clic menu WARP: " + pPlayer.getName());
-                        closeOpenMenu(pPlayer, getMenuWarp(pPlayer));
+                    switch (menuName) {
+                        case "Biome":
+                            Utils.cm("[TRACKING-IW] Clic menu BIOME: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuBiome(pPlayer));
+                            // CONFIANCE
+                            break;
+                        case "Confiance":
+                            Utils.cm("[TRACKING-IW] Clic menu CONFIANCE: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuConfiance(pPlayer));
+                            // CONSTRUCTION
+                            break;
+                        case "Construction":
+                            Utils.cm("[TRACKING-IW] Clic menu CONSTRUCTION: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuConstruction(pPlayer));
+                            // MAISON
+                            break;
+                        case "Maison":
+                            Utils.cm("[TRACKING-IW] Clic menu MAISON: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuMaison(pPlayer));
+                            // METEO
+                            break;
+                        case "Météo":
+                            Utils.cm("[TRACKING-IW] Clic menu METEO: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuMeteo(pPlayer));
+                            // ACTIVATION
+                            break;
+                        case "Activation":
+                            Utils.cm("[TRACKING-IW] Clic menu ACTIVATION: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuActivation(pPlayer));
+                            // TELEPORTATION
+                            break;
+                        case "Téléportation":
+                            Utils.cm("[TRACKING-IW] Clic menu TELEPORTATION: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuTeleportation(pPlayer));
+                            break;
+                        case "Temps":
+                            Utils.cm("[TRACKING-IW] Clic menu TEMPS: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuTemps(pPlayer));
+                            break;
+                        case "Warp":
+                            Utils.cm("[TRACKING-IW] Clic menu WARP: " + pPlayer.getName());
+                            closeOpenMenu(pPlayer, getMenuWarp(pPlayer));
+                            break;
                     }
 
                 })
@@ -566,23 +579,20 @@ public class Inventories {
                         }
 
                         // Pull du IsoWorld
-                        Task.builder().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Si monde présent en dossier ?
-                                // Removing iwInProcess in task
-                                if (Utils.checkTag(pPlayer, worldname)) {
-                                    // Chargement du isoworld + tp
-                                    setWorldProperties(worldname, pPlayer);
-                                    Sponge.getServer().loadWorld(worldname);
-                                    Locations.teleport(pPlayer, worldname);
-                                    plugin.cooldown.addPlayerCooldown(pPlayer, Cooldown.CONFIANCE, Cooldown.CONFIANCE_DELAY);
-                                }
-
-                                // Supprime le lock (worldname, worldname uniquement pour les access confiance)
-                                plugin.lock.remove(worldname + ";" + worldname);
-
+                        Task.builder().execute(() -> {
+                            // Si monde présent en dossier ?
+                            // Removing iwInProcess in task
+                            if (Utils.checkTag(pPlayer, worldname)) {
+                                // Chargement du isoworld + tp
+                                setWorldProperties(worldname, pPlayer);
+                                Sponge.getServer().loadWorld(worldname);
+                                Locations.teleport(pPlayer, worldname);
+                                plugin.cooldown.addPlayerCooldown(pPlayer, Cooldown.CONFIANCE, Cooldown.CONFIANCE_DELAY);
                             }
+
+                            // Supprime le lock (worldname, worldname uniquement pour les access confiance)
+                            plugin.lock.remove(worldname + ";" + worldname);
+
                         })
                                 .delay(1, TimeUnit.SECONDS)
                                 .name("Pull du IsoWorld.").submit(instance);

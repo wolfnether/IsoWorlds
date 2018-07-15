@@ -24,11 +24,7 @@
  */
 package fr.isolonice.isoworld.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Mysql {
     private String host;
@@ -46,34 +42,6 @@ public class Mysql {
         setUsername(username);
         setPassword(password);
         setAutoReconnect(autoReconnect);
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setAutoReconnect(boolean autoReconnect) {
-        this.autoReconnect = autoReconnect;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
     }
 
     public boolean equals(Object o) {
@@ -148,28 +116,56 @@ public class Mysql {
         return this.host;
     }
 
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public int getPort() {
         return this.port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getDatabase() {
         return this.database;
     }
 
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
     public String getUsername() {
         return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return this.password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public boolean isAutoReconnect() {
         return this.autoReconnect;
     }
 
+    public void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+    }
+
     public Connection getConnection() {
         return this.connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 
     public void connect() throws ClassNotFoundException, SQLException {
@@ -178,13 +174,11 @@ public class Mysql {
 
     public Statement query(String query)
             throws SQLException {
-        Statement statement = getConnection().createStatement();
-        return statement;
+        return getConnection().createStatement();
     }
 
     public PreparedStatement prepare(String query)
             throws SQLException {
-        PreparedStatement state = getConnection().prepareStatement(query);
-        return state;
+        return getConnection().prepareStatement(query);
     }
 }

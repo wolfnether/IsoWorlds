@@ -24,33 +24,40 @@
  */
 package fr.isolonice.isoworld.util;
 
+import fr.isolonice.isoworld.Isoworld;
+import fr.isolonice.isoworld.location.Locations;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.persistence.DataFormats;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.user.UserStorageService;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.WorldArchetypes;
-import org.spongepowered.api.world.gamerule.DefaultGameRules;
-import org.spongepowered.api.world.storage.WorldProperties;
-import fr.isolonice.isoworld.Isoworld;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.title.Title;
-import fr.isolonice.isoworld.location.Locations;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.WorldArchetypes;
+import org.spongepowered.api.world.gamerule.DefaultGameRules;
+import org.spongepowered.api.world.storage.WorldProperties;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -62,6 +69,11 @@ public class Utils {
     public static final DataQuery toId = DataQuery.of("SpongeData", "dimensionId");
 
     // ------------------------------------------------- USER MANIPULATION
+    // TPS
+    private static final DecimalFormat tpsFormat = new DecimalFormat("#0.00");
+
+
+    // ------------------------------------------------- MESSAGES
 
     // Méthode pour convertir type player à uuid
     public static UUID PlayerToUUID(Player player) {
@@ -69,9 +81,6 @@ public class Utils {
         uuid = player.getUniqueId();
         return (uuid);
     }
-
-
-    // ------------------------------------------------- MESSAGES
 
     // Envoie un message au serveur
     public static void sm(String msg) {
@@ -83,17 +92,11 @@ public class Utils {
         Sponge.getServer().getConsole().sendMessage(Text.of("[IsoWorlds]: " + msg));
     }
 
-    // Executer une commande sur le serveur
-    public void cmds(String cmd) {
-        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
-    }
-
     // Tiltle with SubTitle
     public static Title titleSubtitle(String title, String subtitle) {
         Text Titre = Text.of(Text.builder(title).color(TextColors.GOLD).build());
         Text SousTitre = Text.of(Text.builder(subtitle).color(TextColors.AQUA).build());
-        Title ready = (Title) Title.of(Titre, SousTitre);
-        return ready;
+        return (Title) Title.of(Titre, SousTitre);
     }
 
     // Send colored Message base
@@ -759,27 +762,17 @@ public class Utils {
         File file = new File(ManageFiles.getPath() + "/" + world.getName() + "@PUSHED");
         File file2 = new File(ManageFiles.getPath() + "/" + world.getName());
         // If exists and contains Isoworld
-        if (file.exists() & file2.exists() & world.getName().endsWith("-IsoWorld")) {
-            return true;
-        }
-        return false;
+        return file.exists() & file2.exists() & world.getName().endsWith("-IsoWorld");
     }
 
     // Cooldown modèle: uuid;commande
     public static Boolean checkLockFormat(String pPlayer, String command) {
         // Si le tableau est null alors lock 0 sinon lock 1
-        if (plugin.lock.get(pPlayer + ";" + command) == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return plugin.lock.get(pPlayer + ";" + command) != null;
     }
 
 
     // ------------------------------------------------- INFORMATION SYSTEM
-
-    // TPS
-    private static final DecimalFormat tpsFormat = new DecimalFormat("#0.00");
 
     // TPS
     public static Text getTPS(double currentTps) {
@@ -808,8 +801,6 @@ public class Utils {
         return user;
     }
 
-    // -------------------------------------------------  CHARGES SYSTEM
-
     // Get charge of a player
     public static Integer firstTime(Player pPlayer, String messageErreur) {
         String CHECK = "SELECT `charges` FROM `players_info` WHERE `UUID_P` = ?";
@@ -834,6 +825,8 @@ public class Utils {
         }
         return null;
     }
+
+    // -------------------------------------------------  CHARGES SYSTEM
 
     // Get all trusted players of pPlayer's IsoWorld
     public static Integer getDimensionId(Player pPlayer, String messageErreur) {
@@ -1051,5 +1044,10 @@ public class Utils {
             return null;
         }
         return 0;
+    }
+
+    // Executer une commande sur le serveur
+    public void cmds(String cmd) {
+        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
     }
 }

@@ -24,6 +24,7 @@
  */
 package fr.isolonice.isoworld.util;
 
+import fr.isolonice.isoworld.Isoworld;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
@@ -32,7 +33,6 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
 import org.spongepowered.api.world.storage.WorldProperties;
-import fr.isolonice.isoworld.Isoworld;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -135,12 +135,15 @@ public class DimsAlt {
                 dc = DataFormats.NBT.readFrom(gzip);
                 gz = true;
 
-                if (dim.equals("minage")) {
-                    dimId = 99998;
-                } else if (dim.equals("exploration")) {
-                    dimId = 99999;
-                } else {
-                    return;
+                switch (dim) {
+                    case "minage":
+                        dimId = 99998;
+                        break;
+                    case "exploration":
+                        dimId = 99999;
+                        break;
+                    default:
+                        return;
                 }
 
                 dc.set(toId, dimId);

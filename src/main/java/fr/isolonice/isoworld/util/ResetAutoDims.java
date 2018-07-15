@@ -44,8 +44,7 @@ public class ResetAutoDims {
         Calendar nextFriday = Calendar.getInstance();
 
         int weekday = nextFriday.get(Calendar.DAY_OF_WEEK);
-        if (weekday != Calendar.FRIDAY)
-        {
+        if (weekday != Calendar.FRIDAY) {
             // calculate how much to add
             // the 2 is the difference between Saturday and Monday
             int days = (Calendar.SATURDAY - weekday + 6) % 7;

@@ -27,7 +27,6 @@ package fr.isolonice.isoworld.command.sub;
 import com.google.common.collect.Iterables;
 import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -51,6 +50,15 @@ public class ListWorlds implements CommandExecutor {
 
     private final Isoworld plugin = Isoworld.instance;
 
+    // Constructeurs
+    public static CommandSpec getCommand() {
+        return CommandSpec.builder()
+                .description(Text.of("Commande pour lister les iWorlds"))
+                .permission("isoworlds.liste")
+                .executor(new ListWorlds())
+                .build();
+    }
+
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
 
@@ -58,7 +66,7 @@ public class ListWorlds implements CommandExecutor {
         ArrayList<World> worlds = new ArrayList<World>();
         Boolean check = false;
 
-        for(World world : Sponge.getServer().getWorlds()) {
+        for (World world : Sponge.getServer().getWorlds()) {
             if (world.isLoaded()) {
                 if (world.getName().contains("-IsoWorld")) {
                     worlds.add(world);
@@ -67,7 +75,7 @@ public class ListWorlds implements CommandExecutor {
         }
 
         // Check si isoworld existe
-        if (check == true) {
+        if (check) {
             pPlayer.sendMessage(Text.of(Text.builder("[IsoWorlds]: ").color(TextColors.GOLD)
                     .append(Text.of(Text.builder("Sijania ne repère aucun IsoWorld dans le Royaume Isolonice").color(TextColors.AQUA))).build()));
             return CommandResult.success();
@@ -76,7 +84,7 @@ public class ListWorlds implements CommandExecutor {
         // Construction des textes en fonction des isoworlds loadés
         Text title = Text.of(Text.builder("[Liste des IsoWorlds (cliquables)]").color(TextColors.GOLD).build());
         pPlayer.sendMessage(title);
-        for(World w : worlds ) {
+        for (World w : worlds) {
             String worldname = w.getName();
             String[] split = w.getName().split("-IsoWorld");
             UUID uuid = UUID.fromString(split[0]);
@@ -99,23 +107,14 @@ public class ListWorlds implements CommandExecutor {
             int numOfEntities = w.getEntities().size();
             int loadedChunks = Iterables.size(w.getLoadedChunks());
 
-            Text name = Text.of(Text.builder(pname + " [" + status +"] | Chunks: " + loadedChunks + " | Entités: " + numOfEntities)
+            Text name = Text.of(Text.builder(pname + " [" + status + "] | Chunks: " + loadedChunks + " | Entités: " + numOfEntities)
                     .color(TextColors.GREEN)
                     .append(Text.builder(" | TPS: " + Sponge.getServer().getTicksPerSecond())
                             .color(Utils.getTPS(Sponge.getServer().getTicksPerSecond()).getColor()).build())
-                    .onClick(TextActions.runCommand("/iw teleport " + pPlayer.getName().toString() + " " + worldname))
+                    .onClick(TextActions.runCommand("/iw teleport " + pPlayer.getName() + " " + worldname))
                     .onHover(TextActions.showText(Text.of(worldname))).build());
             pPlayer.sendMessage(name);
         }
         return CommandResult.success();
-    }
-
-    // Constructeurs
-    public static CommandSpec getCommand() {
-        return CommandSpec.builder()
-                .description(Text.of("Commande pour lister les iWorlds"))
-                .permission("isoworlds.liste")
-                .executor(new ListWorlds())
-                .build();
     }
 }

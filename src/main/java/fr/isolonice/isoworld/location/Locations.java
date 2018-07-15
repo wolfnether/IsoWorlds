@@ -25,14 +25,13 @@
 package fr.isolonice.isoworld.location;
 
 import com.flowpowered.math.vector.Vector3d;
-import org.spongepowered.api.data.property.block.MatterProperty;
-import org.spongepowered.api.event.cause.Cause;
 import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.property.block.MatterProperty;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 

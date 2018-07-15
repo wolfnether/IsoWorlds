@@ -28,28 +28,28 @@ package fr.isolonice.isoworld.command.sub;
  * Created by Edwin on 14/10/2017.
  */
 
+import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Cooldown;
 import fr.isolonice.isoworld.util.Msg;
-import fr.isolonice.isoworld.Isoworld;
 import fr.isolonice.isoworld.util.Utils;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
-
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Trust implements CommandCallable {
 
@@ -86,7 +86,7 @@ public class Trust implements CommandCallable {
             Optional<User> player = userStorage.get(arg[0]);
             try {
                 uuidcible = player.get().getUniqueId();
-            } catch (NoSuchElementException e){
+            } catch (NoSuchElementException e) {
                 e.printStackTrace();
                 pPlayer.sendMessage(Text.of(Text.builder("[IsoWorlds]: ").color(TextColors.GOLD)
                         .append(Text.of(Text.builder(Msg.keys.INVALIDE_JOUEUR).color(TextColors.AQUA))).build()));
