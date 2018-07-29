@@ -48,6 +48,7 @@
  */
 package sponge.util.action;
 
+import com.flowpowered.math.vector.Vector3i;
 import common.ManageFiles;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -55,9 +56,11 @@ import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 import sponge.Main;
 import sponge.util.console.Logger;
+import sponge.world.modifier.TrashGeneratorModifier;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -65,8 +68,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -78,26 +80,28 @@ public class DimsAltAction {
 
     public static void generateDim() {
 
-        String[] dimsSkyblock = new String[]{"MS3", "SF3", "AS2", "PO2", "PO2K"};
-        String[] dims;
+        List<String> dimsSkyblock = Arrays.asList("MS3", "SF3", "AS2", "PO2", "PO2K");
+        Map<Integer, String> dims = new HashMap<>();
+        dims.put(99997, "trash");
 
         // Si contient alors on met pas le minage
-        if (!Arrays.asList(dimsSkyblock).contains(plugin.servername)) {
+        if (!dimsSkyblock.contains(plugin.servername)) {
 
-            dims = new String[]{"exploration", "minage"};
+            dims.put(99999, "exploration");
+            dims.put(99998, "minage");
+        }
 
-            for (String dim : dims) {
+        for (Map.Entry<Integer, String> dim : dims.entrySet()) {
                 // Path dim
 
                 // Set properties
-                setWorldProperties(dim);
+            setWorldProperties(dim.getValue());
 
                 // Set id
-                setId(dim);
+            setId(dim.getValue(), dim.getKey());
 
                 // Load world
-                Sponge.getGame().getServer().loadWorld(dim);
-            }
+            Sponge.getGame().getServer().loadWorld(dim.getValue());
         }
     }
 
@@ -119,6 +123,7 @@ public class DimsAltAction {
                 worldProperties.setWorldBorderCenter(0, 0);
                 worldProperties.setWorldBorderDiameter(6000);
                 worldProperties.setEnabled(true);
+
                 Sponge.getServer().saveWorldProperties(worldProperties);
                 // Border
                 Optional<World> world = Sponge.getServer().getWorld(worldname);
@@ -127,7 +132,16 @@ public class DimsAltAction {
                 }
                 Logger.warning("Border nouveau: " + 6000);
             } else {
-                worldProperties = Sponge.getServer().createWorldProperties(worldname, WorldArchetypes.OVERWORLD);
+                if (worldname.equals("trash")) {
+                    worldProperties = Sponge.getServer().createWorldProperties(worldname, WorldArchetypes.THE_VOID);
+
+                    List<WorldGeneratorModifier> generatorModifiers = new ArrayList<>();
+                    generatorModifiers.add(new TrashGeneratorModifier());
+                    worldProperties.setGeneratorModifiers(generatorModifiers);
+                    worldProperties.setSpawnPosition(new Vector3i(0, 66, 0));
+                } else {
+                    worldProperties = Sponge.getServer().createWorldProperties(worldname, WorldArchetypes.OVERWORLD);
+                }
                 Logger.info("WOLRD PROPERTIES: non présents, création...");
                 worldProperties.setKeepSpawnLoaded(true);
                 worldProperties.setLoadOnStartup(true);
@@ -145,26 +159,17 @@ public class DimsAltAction {
         }
     }
 
-    private static void setId(String dim) {
+    private static void setId(String dimName, int dimId) {
         // TEST
-        Path levelSponge = Paths.get(ManageFiles.getPath() + dim + "/level_sponge.dat");
+        Path levelSponge = Paths.get(ManageFiles.getPath() + dimName + "/level_sponge.dat");
         if (Files.exists(levelSponge)) {
             DataContainer dc;
             boolean gz = false;
-            int dimId;
 
             // Find dat
             try (GZIPInputStream gzip = new GZIPInputStream(Files.newInputStream(levelSponge, StandardOpenOption.READ))) {
                 dc = DataFormats.NBT.readFrom(gzip);
                 gz = true;
-
-                if (dim.equals("minage")) {
-                    dimId = 99998;
-                } else if (dim.equals("exploration")) {
-                    dimId = 99999;
-                } else {
-                    return;
-                }
 
                 dc.set(toId, dimId);
 

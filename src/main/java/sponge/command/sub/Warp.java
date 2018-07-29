@@ -25,22 +25,20 @@
 package sponge.command.sub;
 
 import common.Cooldown;
-import common.Msg;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import sponge.Main;
 import sponge.location.Locations;
 import sponge.util.console.Logger;
-import sponge.util.message.Message;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +51,8 @@ public class Warp implements CommandCallable {
         Player pPlayer = (Player) source;
         String[] arg = args.split(" ");
 
+        List<String> authorizeWarp = Arrays.asList("warp", "minage", "exploration", "end", "nether");
+
         Logger.info(arg[0]);
 
         //If the method return true then the command is in lock
@@ -60,7 +60,7 @@ public class Warp implements CommandCallable {
             return CommandResult.success();
         }
 
-        if (arg[0].equals("minage") || arg[0].equals("exploration") || arg[0].equals("end") || arg[0].equals("nether")) {
+        if (authorizeWarp.indexOf(arg[0]) != -1) {
             // Téléportation du joueur
             Locations.teleport(pPlayer, arg[0]);
         } else {
