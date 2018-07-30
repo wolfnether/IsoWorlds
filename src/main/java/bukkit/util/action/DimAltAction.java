@@ -27,12 +27,15 @@ package bukkit.util.action;
 import bukkit.Main;
 import bukkit.util.console.Command;
 import bukkit.util.console.Logger;
+import bukkit.world.generator.trashGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DimAltAction {
 
@@ -46,24 +49,27 @@ public class DimAltAction {
             public void run() {
 
                 String[] dimsSkyblock = new String[]{"MS3", "SF3", "AS2", "PO2", "PO2K"};
-                String[] dims;
+                Map<Integer, String> dims = new HashMap<>();
+                dims.put(99997, "trash");
 
                 // Si contient alors on met pas le minage
                 if (!Arrays.asList(dimsSkyblock).contains(plugin.servername)) {
-
-                    dims = new String[]{"exploration", "minage"};
-
-                    for (String dim : dims) {
-
-                        // Create
-                        Bukkit.getServer().createWorld(new WorldCreator(dim));
-
-                        // Load world
-                        Bukkit.getServer().createWorld(new WorldCreator(dim));
-
-                        // Set properties
-                        setWorldProperties(dim);
+                    dims.put(99999, "exploration");
+                    dims.put(99998, "minage");
+                }
+                for (Map.Entry<Integer, String> dim : dims.entrySet()) {
+                    WorldCreator worldGenerator = new WorldCreator(dim.getValue());
+                    if (dim.getValue().equals("trash")) {
+                        worldGenerator.generator(new trashGenerator());
                     }
+                    // Create
+                    Bukkit.getServer().createWorld(worldGenerator);
+
+                    // Load world
+                    Bukkit.getServer().createWorld(worldGenerator);
+
+                    // Set properties
+                    setWorldProperties(dim.getValue());
                 }
             }
         }, 60 * 20);
