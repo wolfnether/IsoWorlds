@@ -27,7 +27,7 @@ package bukkit.util.action;
 import bukkit.Main;
 import bukkit.util.console.Command;
 import bukkit.util.console.Logger;
-import bukkit.world.generator.trashGenerator;
+import bukkit.world.generator.TrashGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -60,7 +60,7 @@ public class DimAltAction {
                 for (Map.Entry<Integer, String> dim : dims.entrySet()) {
                     WorldCreator worldGenerator = new WorldCreator(dim.getValue());
                     if (dim.getValue().equals("trash")) {
-                        worldGenerator.generator(new trashGenerator());
+                        worldGenerator.generator(new TrashGenerator());
                     }
                     // Create
                     Bukkit.getServer().createWorld(worldGenerator);

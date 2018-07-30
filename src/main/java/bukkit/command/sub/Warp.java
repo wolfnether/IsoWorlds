@@ -44,7 +44,7 @@ public class Warp {
         Player pPlayer = (Player) sender;
         Integer len = args.length;
 
-        List<String> validDim = Arrays.asList(new String[]{"minage", "exploration", "trash", "end", "nether"});
+        List<String> validDim = Arrays.asList("end", "exploration", "minage", "nether", "trash");
 
         //If the method return true then the command is in lock
         if (!instance.cooldown.isAvailable(pPlayer, Cooldown.WARP)) {
@@ -57,7 +57,7 @@ public class Warp {
             return;
         }
 
-        if (validDim.contains(args[0])) {
+        if (validDim.indexOf(args[1]) != -1) {
             Locations.teleport(pPlayer, args[1]);
         }
 
