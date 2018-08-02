@@ -24,6 +24,7 @@
  */
 package bukkit.util.inventory;
 
+import bukkit.util.console.Logger;
 import bukkit.util.inventory.biome.BiomeInv;
 import bukkit.util.inventory.build.BuildInv;
 import bukkit.util.inventory.enable.EnableInv;
@@ -48,7 +49,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import bukkit.util.console.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +104,19 @@ public class MainInv implements Listener {
                 } else if (menuName.equals(msgNode.get("InvWarp"))) {
                     Logger.tracking("Clic menu WARP: " + p.getName());
                     WarpInv.getInv(pPlayer).open(pPlayer);
+                } else if (menuName.equals("Toggle PVP")) {
+                    if (pPlayer.getWorld().getName().startsWith(pPlayer.getUniqueId().toString())) {
+                        boolean pvpState = p.getWorld().getPVP();
+                        p.getWorld().setPVP(!pvpState);
+                        p.sendMessage(
+                                pvpState ?
+                                        "PVP deactivated" :
+                                        "PVP activated"
+                        );
+                        MenuPrincipal(p).open(p);
+                    } else {
+                        pPlayer.sendMessage("You are not the owner of this world");
+                    }
                 }
 
                 return true;
@@ -133,6 +146,7 @@ public class MainInv implements Listener {
         //String[] list7 = new String[]{"Chargez-Déchargez votre Isoworld"};
         //String[] list8 = new String[]{"Téléportez vous sur un Isoworld [STAFF]"};
 
+
         // Construction des skin itemstack
         ItemStack item1 = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta sm = (SkullMeta) item1.getItemMeta();
@@ -147,8 +161,10 @@ public class MainInv implements Listener {
         menu.addButton(menu.getRow(0), 5, new ItemStack(Material.DOUBLE_PLANT), ChatColor.YELLOW + msgNode.get("InvWeather"), list6);
         menu.addButton(menu.getRow(0), 6, new ItemStack(Material.COMPASS), ChatColor.DARK_GREEN + msgNode.get("InvWarp"), list8);
         menu.addButton(menu.getRow(0), 8, new ItemStack(Material.LEVER), ChatColor.AQUA + msgNode.get("InvStat"), list7);
+        menu.addButton(menu.getRow(1), 1, new ItemStack(Material.DIAMOND_SWORD), "Toggle PVP", pPlayer.getWorld().getPVP() ? "Deactivate PVP" : "Activate PVP");
         //menu.addButton(menu.getRow(0), 6, new ItemStack(Material.LEVER), ChatColor.RED + "Activation", list7);
         //menu.addButton(menu.getRow(0), 7, new ItemStack(Material.DIAMOND_BOOTS), ChatColor.LIGHT_PURPLE + "Téléportation", list8);
+
 
         return menu;
     }
