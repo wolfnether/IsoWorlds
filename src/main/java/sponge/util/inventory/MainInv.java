@@ -55,7 +55,9 @@ import sponge.util.inventory.trust.TrustInv;
 import sponge.util.inventory.warp.WarpInv;
 import sponge.util.inventory.weather.WeatherInv;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static common.Msg.msgNode;
@@ -107,6 +109,21 @@ public class MainInv {
                     } else if (menuName.equals(msgNode.get("InvWarp"))) {
                         Logger.tracking("Clic menu WARP: " + pPlayer.getName());
                         closeOpenMenu(pPlayer, WarpInv.getInv(pPlayer));
+                    } else if (menuName.equals("Toggle PVP")) {
+                        if (pPlayer.getWorld().getName().startsWith(pPlayer.getUniqueId().toString())) {
+                            boolean pvpState = pPlayer.getWorld().getProperties().isPVPEnabled();
+                            pPlayer.getWorld().getProperties().setPVPEnabled(!pvpState);
+                            pPlayer.sendMessage(
+                                    Text.of(
+                                            pvpState ?
+                                                    "PVP deactivated" :
+                                                    "PVP activated")
+                            );
+                            closeOpenMenu(pPlayer, menuPrincipal(pPlayer));
+                        } else {
+                            pPlayer.sendMessage(Text.of("You are not the owner of this world"));
+                        }
+
                     }
 
                 })
@@ -181,6 +198,13 @@ public class MainInv {
         menu.query(SlotPos.of(5, 0)).set(item6);
         menu.query(SlotPos.of(6, 0)).set(item7);
         menu.query(SlotPos.of(8, 0)).set(item9);
+        menu.query(SlotPos.of(1, 1)).set(
+                ItemStack.builder()
+                        .itemType(ItemTypes.DIAMOND_SWORD).quantity(1)
+                        .add(Keys.DISPLAY_NAME, Text.of(Text.builder("Toogle PVP")))
+                        .add(Keys.ITEM_LORE, Collections.singletonList(Text.of(pPlayer.getWorld().getProperties().isPVPEnabled() ? "Deactivate PVP" : "Activate PVP")))
+                        .build()
+        );
 
         // STAFF
         //if (pPlayer.hasPermission("isworlds.menu.activation")) {
