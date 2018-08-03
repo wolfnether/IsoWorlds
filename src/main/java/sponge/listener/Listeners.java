@@ -27,40 +27,39 @@ package sponge.listener;
 import common.ManageFiles;
 import common.Msg;
 import common.action.IsoworldsAction;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
-import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.world.ChunkPreGenerationEvent;
-import org.spongepowered.api.event.world.LoadWorldEvent;
-import org.spongepowered.api.event.world.UnloadWorldEvent;
-import org.spongepowered.api.event.world.chunk.LoadChunkEvent;
-import org.spongepowered.api.scheduler.Task;
-import sponge.configuration.Configuration;
-import sponge.location.Locations;
-import sponge.util.console.Logger;
-import sponge.Main;
-
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
+import org.spongepowered.api.event.world.UnloadWorldEvent;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+import sponge.Main;
+import sponge.configuration.Configuration;
+import sponge.location.Locations;
+import sponge.util.console.Logger;
 import sponge.util.message.Message;
+import sponge.world.modifier.OceanGeneratorModifier;
 
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import static sponge.Main.instance;
@@ -308,6 +307,11 @@ public class Listeners {
         if (p.getWorld().getName().equals("Isolonice")) {
             event.setCancelled(true);
         }
+    }
+
+    @Listener
+    public void onGameInitialization(GameInitializationEvent event) {
+        Sponge.getRegistry().register(WorldGeneratorModifier.class, new OceanGeneratorModifier());
     }
 
 //    @Listener
