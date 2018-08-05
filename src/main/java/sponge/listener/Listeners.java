@@ -54,6 +54,7 @@ import sponge.configuration.Configuration;
 import sponge.location.Locations;
 import sponge.util.console.Logger;
 import sponge.util.message.Message;
+import sponge.world.modifier.FlatGeneratorModifier;
 import sponge.world.modifier.OceanGeneratorModifier;
 
 import java.io.File;
@@ -312,6 +313,7 @@ public class Listeners {
     @Listener
     public void onGameInitialization(GameInitializationEvent event) {
         Sponge.getRegistry().register(WorldGeneratorModifier.class, new OceanGeneratorModifier());
+        Sponge.getRegistry().register(WorldGeneratorModifier.class, new FlatGeneratorModifier());
     }
 
 //    @Listener
