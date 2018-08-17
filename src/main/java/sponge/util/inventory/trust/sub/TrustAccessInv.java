@@ -156,10 +156,7 @@ public class TrustAccessInv {
                 skinData.set(Keys.REPRESENTED_PLAYER, GameProfile.of(user.get().getUniqueId(), user.get().getName()));
                 stack.offer(skinData);
 
-                if (i >= 8) {
-                    j = j++;
-                }
-                menu.query(SlotPos.of(i, j)).set(stack);
+                menu.query(SlotPos.of((int)(i/9), i%9)).set(stack);
                 i++;
             }
         } catch (Exception e) {
