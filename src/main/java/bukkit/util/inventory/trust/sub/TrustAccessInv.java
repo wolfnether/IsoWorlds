@@ -101,11 +101,7 @@ public class TrustAccessInv implements Listener {
                 SkullMeta sm = (SkullMeta) item1.getItemMeta();
                 sm.setOwner(pname);
                 item1.setItemMeta(sm);
-
-                if (i >= 8) {
-                    j = j++;
-                }
-                menu.addButton(menu.getRow(j), i, item1, ChatColor.GOLD + msgNode.get("TrustAccessLore2") + ": " + pname, list1);
+                menu.addButton((int)(i/9), i%9, item1, ChatColor.GOLD + msgNode.get("TrustAccessLore2") + ": " + pname, list1);
                 i++;
             }
         } catch (Exception e) {
