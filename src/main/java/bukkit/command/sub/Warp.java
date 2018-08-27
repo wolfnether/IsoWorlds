@@ -25,12 +25,16 @@
 package bukkit.command.sub;
 
 import bukkit.Main;
+import bukkit.configuration.Configuration;
 import bukkit.location.Locations;
 import bukkit.util.message.Message;
 import common.Cooldown;
 import common.Msg;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Warp {
 
@@ -40,6 +44,15 @@ public class Warp {
         instance = Main.getInstance();
         Player pPlayer = (Player) sender;
         Integer len = args.length;
+
+        Set<String> authorizedWarp = new HashSet<>();
+        if (Configuration.getMining())
+            authorizedWarp.add("minage"); //TODO add name to configuration
+        if (Configuration.getExploration())
+            authorizedWarp.add("exploration"); //TODO add name to configuration too
+
+        authorizedWarp.add("end");
+        authorizedWarp.add("nether");
 
         //If the method return true then the command is in lock
         if (!instance.cooldown.isAvailable(pPlayer, Cooldown.WARP)) {
@@ -52,7 +65,7 @@ public class Warp {
             return;
         }
 
-        if (args[1].equals("exploration") || args[1].equals("minage") || args[1].equals("end") || args[1].equals("nether")) {
+        if (authorizedWarp.contains(args[1])) {
             Locations.teleport(pPlayer, args[1]);
         }
 

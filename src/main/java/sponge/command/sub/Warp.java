@@ -25,24 +25,24 @@
 package sponge.command.sub;
 
 import common.Cooldown;
-import common.Msg;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import sponge.Main;
+import sponge.configuration.Configuration;
 import sponge.location.Locations;
 import sponge.util.console.Logger;
-import sponge.util.message.Message;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class Warp implements CommandCallable {
 
@@ -55,12 +55,21 @@ public class Warp implements CommandCallable {
 
         Logger.info(arg[0]);
 
+        Set<String> authorizedWarp = new HashSet<>();
+        if (Configuration.getMining())
+            authorizedWarp.add("minage"); //TODO add name to configuration
+        if (Configuration.getExploration())
+            authorizedWarp.add("exploration"); //TODO add name to configuration too
+
+        authorizedWarp.add("end");
+        authorizedWarp.add("nether");
+
         //If the method return true then the command is in lock
         if (!instance.cooldown.isAvailable(pPlayer, Cooldown.WARP)) {
             return CommandResult.success();
         }
 
-        if (arg[0].equals("minage") || arg[0].equals("exploration") || arg[0].equals("end") || arg[0].equals("nether")) {
+        if (authorizedWarp.contains(arg[0])) {
             // Téléportation du joueur
             Locations.teleport(pPlayer, arg[0]);
         } else {

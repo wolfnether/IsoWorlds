@@ -25,14 +25,13 @@
 package bukkit.util.action;
 
 import bukkit.Main;
+import bukkit.configuration.Configuration;
 import bukkit.util.console.Command;
 import bukkit.util.console.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
-
-import java.util.Arrays;
 
 public class DimAltAction {
 
@@ -44,29 +43,23 @@ public class DimAltAction {
 
             @Override
             public void run() {
-
-                String[] dimsSkyblock = new String[]{"MS3", "SF3", "AS2", "PO2", "PO2K"};
-                String[] dims;
-
-                // Si contient alors on met pas le minage
-                if (!Arrays.asList(dimsSkyblock).contains(plugin.servername)) {
-
-                    dims = new String[]{"exploration", "minage"};
-
-                    for (String dim : dims) {
-
-                        // Create
-                        Bukkit.getServer().createWorld(new WorldCreator(dim));
-
-                        // Load world
-                        Bukkit.getServer().createWorld(new WorldCreator(dim));
-
-                        // Set properties
-                        setWorldProperties(dim);
-                    }
-                }
+                if (Configuration.getMining())
+                    createDim("minage"); //TODO add name to configuration
+                if (Configuration.getExploration())
+                    createDim("exploration"); //TODO add name to configuration
             }
         }, 60 * 20);
+    }
+
+    private static void createDim(String dim) {
+        // Create
+        Bukkit.getServer().createWorld(new WorldCreator(dim));
+
+        // Load world
+        Bukkit.getServer().createWorld(new WorldCreator(dim));
+
+        // Set properties
+        setWorldProperties(dim);
     }
 
     private static void setWorldProperties(String worldname) {

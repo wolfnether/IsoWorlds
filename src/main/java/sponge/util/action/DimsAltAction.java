@@ -57,6 +57,7 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
 import org.spongepowered.api.world.storage.WorldProperties;
 import sponge.Main;
+import sponge.configuration.Configuration;
 import sponge.util.console.Logger;
 
 import java.io.IOException;
@@ -65,7 +66,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -77,28 +77,21 @@ public class DimsAltAction {
     private static final DataQuery toId = DataQuery.of("SpongeData", "dimensionId");
 
     public static void generateDim() {
+        if (Configuration.getMining())
+            createDim("minage"); //TODO add name to configuration
+        if (Configuration.getExploration())
+            createDim("exploration"); //TODO add name to configuration
+    }
 
-        String[] dimsSkyblock = new String[]{"MS3", "SF3", "AS2", "PO2", "PO2K"};
-        String[] dims;
+    private static void createDim(String dim) {
+        // Set properties
+        setWorldProperties(dim);
 
-        // Si contient alors on met pas le minage
-        if (!Arrays.asList(dimsSkyblock).contains(plugin.servername)) {
+        // Set id
+        setId(dim);
 
-            dims = new String[]{"exploration", "minage"};
-
-            for (String dim : dims) {
-                // Path dim
-
-                // Set properties
-                setWorldProperties(dim);
-
-                // Set id
-                setId(dim);
-
-                // Load world
-                Sponge.getGame().getServer().loadWorld(dim);
-            }
-        }
+        // Load world
+        Sponge.getGame().getServer().loadWorld(dim);
     }
 
     private static void setWorldProperties(String worldname) {
